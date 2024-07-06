@@ -15,9 +15,7 @@ mp_drawing = mp.solutions.drawing_utils
 
 # Initialize deques to store drawing points
 if "points" not in st.session_state:
-    st.session_state.points: List[Deque[Tuple[int, int]]] = [
-        deque(maxlen=1024) for _ in range(4)
-    ]
+    st.session_state.points: List[Deque[Tuple[int, int]]] = [deque(maxlen=1024) for _ in range(4)]
 if "paintWindow" not in st.session_state:
     st.session_state.paintWindow = np.ones((471, 636, 3), dtype=np.uint8) * 255
 
@@ -26,7 +24,6 @@ is_drawing = False
 
 # Set up the drawing colors
 colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0, 255, 255)]
-
 
 def main():
     global colorIndex, is_drawing
@@ -64,8 +61,8 @@ def main():
 
         # Set up video writer if recording is enabled
         if record:
-            fourcc = cv2.VideoWriter_fourcc(*"XVID")
-            out = cv2.VideoWriter("output.avi", fourcc, 20.0, (640, 480))
+            fourcc = cv2.VideoWriter_fourcc(*'XVID')
+            out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
 
         while run:
             start_time = time.time()
@@ -81,9 +78,7 @@ def main():
 
             if hand_landmarks:
                 for landmarks in hand_landmarks:
-                    mp_drawing.draw_landmarks(
-                        frame, landmarks, mp_hands.HAND_CONNECTIONS
-                    )
+                    mp_drawing.draw_landmarks(frame, landmarks, mp_hands.HAND_CONNECTIONS)
 
                     # Get the landmarks for the index finger tip and thumb tip
                     index_finger_tip = landmarks.landmark[
@@ -106,9 +101,7 @@ def main():
                         is_drawing = False
 
                     if is_drawing:
-                        st.session_state.points[colorIndex].appendleft(
-                            index_finger_tip_pos
-                        )
+                        st.session_state.points[colorIndex].appendleft(index_finger_tip_pos)
                     else:
                         st.session_state.points[colorIndex].appendleft(None)
 
@@ -118,23 +111,15 @@ def main():
                         continue
                     cv2.line(frame, color_points[j - 1], color_points[j], colors[i], 2)
                     cv2.line(
-                        st.session_state.paintWindow,
-                        color_points[j - 1],
-                        color_points[j],
-                        colors[i],
-                        2,
+                        st.session_state.paintWindow, color_points[j - 1], color_points[j], colors[i], 2
                     )
 
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            paintWindow_rgb = cv2.cvtColor(
-                st.session_state.paintWindow, cv2.COLOR_BGR2RGB
-            )
+            paintWindow_rgb = cv2.cvtColor(st.session_state.paintWindow, cv2.COLOR_BGR2RGB)
 
             # Display the frame and paint window using Streamlit
             frame_placeholder.image(frame, channels="RGB", use_column_width=True)
-            paint_placeholder.image(
-                paintWindow_rgb, channels="RGB", use_column_width=True
-            )
+            paint_placeholder.image(paintWindow_rgb, channels="RGB", use_column_width=True)
 
             # Write the frame to the video file if recording is enabled
             if record:
@@ -152,6 +137,6 @@ def main():
             out.release()
         cv2.destroyAllWindows()
 
-
 if __name__ == "__main__":
     main()
+
